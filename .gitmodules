@@ -1,0 +1,3 @@
+[submodule "scripts/tests/wasmer"]
+	path = scripts/tests/wasmer
+	url = https://github.com/OffchainLabs/wasmer.git

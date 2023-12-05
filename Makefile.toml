@@ -1,0 +1,64 @@
+
+extend = [{ path = "check-contracts.Makefile.toml" }]
+
+[config]
+default_to_workspace = false
+
+[tasks.build]
+command = "cargo"
+args = [
+    "+nightly",
+    "build",
+    "--release",
+    "-Z",
+    "build-std=std,panic_abort",
+    "-Z",
+    "build-std-features=panic_immediate_abort",
+    "--locked",
+]
+
+[tasks.optimize]
+description = "Build optimized contracts binaries"
+dependencies = ["build"]
+script = '''
+cargo +nightly -C scripts/optimizer run -Z unstable-options --target $(rustc -vV | sed -n 's|host: ||p')
+'''
+
+[tasks.test-contracts]
+description = "Run tests"
+# NOTE: all tests are run in a single thread to avoid issues with wasmer 
+# see https://github.com/wasmerio/wasmer/issues/3793#issuecomment-1570952695
+script = '''
+RUST_TEST_THREADS=1 cargo +nightly -C scripts/tests test --locked  -Z unstable-options
+'''
+
+[tasks.test-contracts-m1]
+description = "Run tests on mac m1"
+script = '''
+RUST_TEST_THREADS=1 cargo +nightly -C scripts/tests test --locked  -Z unstable-options --target aarch64-apple-darwin
+'''
+
+[tasks.fix]
+toolchain = "nightly"
+command = "cargo"
+args = ["fmt", "--all"]
+
+[tasks.fmt]
+toolchain = "nightly"
+command = "cargo"
+args = ["fmt", "--all", "--check"]
+
+[tasks.clippy]
+command = "cargo"
+args = ["clippy", "--tests", "--", "-D", "warnings"]
+
+[tasks.clippy-fix]
+command = "cargo"
+args = ["clippy", "--fix"]
+
+[tasks.audit]
+command = "cargo"
+args = ["audit"]
+
+[tasks.all-checks]
+dependencies = ["fmt", "clippy", "build", "test-contracts", "audit"]

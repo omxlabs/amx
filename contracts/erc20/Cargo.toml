@@ -1,0 +1,22 @@
+[package]
+name = "omx_erc20"
+version = { workspace = true }
+authors = { workspace = true }
+license = { workspace = true }
+edition = { workspace = true }
+homepage = { workspace = true }
+repository = { workspace = true }
+keywords = { workspace = true }
+
+[features]
+export-abi = ["stylus-sdk/export-abi"]
+
+[dependencies]
+alloy-primitives = { workspace = true }
+alloy-sol-types = { workspace = true }
+stylus-sdk = { workspace = true }
+wee_alloc = { workspace = true }
+syn-solidity = { workspace = true }
+
+omx_common = { workspace = true }
+omx_interfaces = { workspace = true }

@@ -1,0 +1,14 @@
+/target
+/Cargo.lock
+/artifacts
+/schemas
+/ts
+/key
+/nitro-testnode
+/stylus
+/test.rs
+
+node_modules
+
+.vscode
+.idea

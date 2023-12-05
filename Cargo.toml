@@ -1,0 +1,108 @@
+[workspace]
+members = [
+    "interfaces",
+    "contracts/weth",
+    "contracts/base_token",
+    "contracts/erc20",
+    "contracts/yield_tracker",
+    "contracts/yield_token",
+    "contracts/vault_price_feed",
+    "contracts/vault",
+    "contracts/vault_utils",
+    "contracts/swap_manager",
+    "contracts/orderbook_swap",
+    "contracts/orderbook_decrease",
+    "contracts/orderbook_increase",
+    "contracts/funding_rate_manager",
+    "contracts/fee_manager",
+    "contracts/positions_manager",
+    "contracts/positions_manager_utils",
+    "contracts/positions_decrease_manager",
+    "contracts/positions_increase_manager",
+    "contracts/positions_liquidation_manager",
+    "contracts/positions_decrease_router",
+    "contracts/positions_increase_router",
+    "contracts/swap_router",
+    "contracts/olp_manager",
+    "contracts/shorts_tracker",
+    "contracts/reward_router",
+    "contracts/reward_tracker",
+    "contracts/reward_tracker_staking",
+    "contracts/reward_distributor",
+    "contracts/bonus_distributor",
+    "contracts/olp_manager_utils",
+    "contracts/time_distributor",
+    "common",
+]
+
+[workspace.package]
+version = "0.1.0"
+authors = ["omxlabs"]
+license = "GPL-3.0-or-later"
+edition = "2021"
+homepage = "https://github.com/chadury2021/omx_wasm"
+repository = "https://github.com/chadury2021/omx_wasm"
+keywords = [
+    "arbitrum",
+    "ethereum",
+    "stylus",
+    "omx",
+    "exchange",
+    "smart contracts",
+]
+
+[workspace.dependencies]
+syn-solidity = "0.3.1"
+alloy-primitives = "0.3.3"
+alloy-sol-types = "0.3.1"
+stylus-sdk = { version = "0.4.1", features = ["reentrant"] }
+# stylus-sdk = { version = "0.4.1", features = ["reentrant", "debug"] }
+wee_alloc = "0.4.5"
+ruint = "1.10.1"
+itertools = "0.12.0"
+
+omx_interfaces = { version = "0.1.0", path = "./interfaces" }
+omx_common = { version = "0.1.0", path = "./common" }
+
+omx_time_distributor = { version = "0.1.0", path = "./contracts/time_distributor" }
+omx_reward_router = { version = "0.1.0", path = "./contracts/reward_router" }
+omx_reward_tracker = { version = "0.1.0", path = "./contracts/reward_tracker" }
+emx_reward_tracker_staking = { version = "0.1.0", path = "./contracts/reward_tracker_staking" }
+omx_bonus_distributor = { version = "0.1.0", path = "./contracts/bonus_distributor" }
+omx_reward_distributor = { version = "0.1.0", path = "./contracts/reward_distributor" }
+omx_shorts_tracker = { version = "0.1.0", path = "./contracts/shorts_tracker" }
+omx_olp_manager_utils = { version = "0.1.0", path = "./contracts/olp_manager_utils" }
+omx_olp_manager = { version = "0.1.0", path = "./contracts/olp_manager" }
+omx_base_token = { version = "0.1.0", path = "./contracts/base_token" }
+omx_erc20 = { version = "0.1.0", path = "./contracts/erc20" }
+omx_weth = { version = "0.1.0", path = "./contracts/weth" }
+omx_vault_price_feed = { version = "0.1.0", path = "./contracts/vault_price_feed" }
+omx_yield_tracker = { version = "0.1.0", path = "./contracts/yield_tracker" }
+omx_yield_token = { version = "0.1.0", path = "./contracts/yield_token" }
+omx_vault = { version = "0.1.0", path = "./contracts/vault" }
+omx_swap_manager = { version = "0.1.0", path = "./contracts/swap_manager" }
+omx_orderbook_swap = { version = "0.1.0", path = "./contracts/orderbook_swap" }
+omx_orderbook_decrease = { version = "0.1.0", path = "./contracts/orderbook_decrease" }
+omx_orderbook_increase = { version = "0.1.0", path = "./contracts/orderbook_increase" }
+omx_funding_rate_manager = { version = "0.1.0", path = "./contracts/funding_rate_manager" }
+omx_fee_manager = { version = "0.1.0", path = "./contracts/fee_manager" }
+omx_positions_manager = { version = "0.1.0", path = "./contracts/positions_manager" }
+omx_positions_decrease_manager = { version = "0.1.0", path = "./contracts/positions_decrease_manager" }
+omx_positions_increase_manager = { version = "0.1.0", path = "./contracts/positions_increase_manager" }
+omx_positions_liquidation_manager = { version = "0.1.0", path = "./contracts/positions_liquidation_manager" }
+omx_positions_manager_utils = { version = "0.1.0", path = "./contracts/positions_manager_utils" }
+omx_vault_utils = { version = "0.1.0", path = "./contracts/vault_utils" }
+omx_positions_decrease_router = { version = "0.1.0", path = "./contracts/positions_decrease_router" }
+omx_positions_increase_router = { version = "0.1.0", path = "./contracts/positions_increase_router" }
+omx_swap_router = { version = "0.1.0", path = "./contracts/swap_router" }
+
+[profile.release]
+codegen-units = 1
+panic = "abort"
+opt-level = "z"
+strip = true
+lto = true
+debug = false
+rpath = false
+debug-assertions = false
+incremental = false

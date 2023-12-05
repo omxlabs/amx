@@ -1,0 +1,25 @@
+[package]
+name = "omx_optimizer"
+version = "0.0.1"
+authors = ["omxlabs"]
+license = "GPL-3.0-or-later"
+edition = "2021"
+homepage = "https://github.com/chadury2021/omx_wasm"
+repository = "https://github.com/chadury2021/omx_wasm"
+keywords = ["utils", "optimization", "omx"]
+
+[dependencies]
+wasm-opt = "0.114.1"
+
+[profile.release]
+codegen-units = 1
+panic = "abort"
+opt-level = "z"
+strip = true
+lto = true
+debug = false
+rpath = false
+debug-assertions = false
+incremental = false
+
+[workspace]

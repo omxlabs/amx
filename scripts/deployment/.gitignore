@@ -1,0 +1,12 @@
+/target
+/Cargo.lock
+/artifacts
+/schemas
+/ts
+/key
+/logs
+
+node_modules
+
+.vscode
+.idea

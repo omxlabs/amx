@@ -1,0 +1,10 @@
+/target
+/contracts
+/key
+/test.rs
+
+node_modules
+
+.vscode
+.idea
+.env

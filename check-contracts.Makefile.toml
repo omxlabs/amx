@@ -1,0 +1,59 @@
+
+[tasks.check-contracts]
+description = "Check gas usage for deploy"
+dependencies = ["optimize"]
+script = '''
+ARTIFACTS_PATH=artifacts
+
+check () {
+    echo "\n$1:"
+    cargo stylus check --private-key-path=key --wasm-file-path ${ARTIFACTS_PATH}/${1}
+}
+
+# check all .wasm files in $ARTIFACTS_PATH folder
+for wasm_file in $(ls ${ARTIFACTS_PATH}/*.wasm); do
+    check $(basename ${wasm_file})
+done
+'''
+
+[tasks.all-abis]
+description = "Generates all contract ABIs"
+script_runner = "bash"
+dependencies = ["check-contracts"]
+script = '''
+IGNORE_CONTRACTS=(omx_test_pyth omx_interfaces)
+
+ARTIFACTS_PATH=artifacts
+ABI_PATH=abi
+
+rm -rf ${ABI_PATH}
+mkdir -p ${ABI_PATH}
+
+gen_abi () {
+    # generate sol interface
+    cargo -q run --features export-abi --bin ${1} --target x86_64-unknown-linux-gnu > ${ABI_PATH}/${1}.sol
+
+    # generate json based on sol interface
+    result=$(solc ${ABI_PATH}/${1}.sol --abi)
+
+    # remove first 3 lines
+    result=$(echo "$result" | sed -e '1,3d')
+
+    echo "$result" > ${ABI_PATH}/${1}.json
+}
+
+# go through all .wasm files in $ARTIFACTS_PATH folder
+for wasm_file in $(ls ${ARTIFACTS_PATH}/*.wasm); do
+    # get contract name from file name
+    base_name=$(basename "$wasm_file")
+    name_without_extension="${base_name%.*}"
+
+    # check if contract is in IGNORE_CONTRACTS
+    if [[ " ${IGNORE_CONTRACTS[@]} " =~ " ${name_without_extension} " ]]; then
+        continue
+    fi
+
+    # generate abi
+    gen_abi $name_without_extension
+done
+'''
