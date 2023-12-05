@@ -1,0 +1,82 @@
+name: Artifacts
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+
+jobs:
+  artifacts:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Rust toolchain for wasm
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: x86_64-unknown-linux-gnu
+          components: rustfmt, clippy
+          profile: minimal
+          override: true
+
+      # This step is for the wasm32-unknown-unknown target
+      - name: Add wasm target
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+          override: true
+
+      - name: update toolchain
+        run: rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+
+      # Add a separate step for the x86_64-unknown-linux-gnu target
+      - name: Add Linux target
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: x86_64-unknown-linux-gnu
+          override: true
+
+      # selecting a toolchain should happen before the plugin, as the cache uses the current rustc version as its cache key
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo make
+        uses: davidB/rust-cargo-make@v1
+
+      - name: Install cargo stylus
+        env:
+          RUSTFLAGS: "-C link-args=-rdynamic"
+        run: cargo install --force cargo-stylus
+
+      - name: Install solc
+        run: cargo install solc-select
+
+      - name: Select solc version
+        run: solc-select install 0.8.4
+
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Create key file
+        run: echo "$DEPLOYER_PRIVATE_KEY" > key
+
+      - name: Compile contracts to wasm and generate abi for all of them
+        run: cargo make all-abis
+
+      - name: Upload wasm binaries
+        uses: actions/upload-artifact@v2
+        with:
+          name: contracts_binaries
+          path: artifacts/*.wasm
+
+      - name: Upload contract abis
+        uses: actions/upload-artifact@v2
+        with:
+          name: contracts_abi
+          path: abi/*.wasm

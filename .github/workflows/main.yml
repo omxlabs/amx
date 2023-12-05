@@ -1,0 +1,69 @@
+name: Main
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+env:
+  RUST_BACKTRACE: 1
+  CARGO_TERM_COLOR: always
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Install Rust toolchain for wasm
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: x86_64-unknown-linux-gnu
+          components: rustfmt, clippy
+          profile: minimal
+          override: true
+
+      - name: Add wasm target
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: nightly
+          target: wasm32-unknown-unknown
+          override: true
+
+      - name: Update toolchain
+        run: rustup component add rust-src --toolchain nightly-x86_64-unknown-linux-gnu
+
+      # selecting a toolchain should happen before the plugin, as the cache uses the current rustc version as its cache key
+      - name: Cache dependencies
+        uses: Swatinem/rust-cache@v2
+
+      - name: Install cargo make
+        uses: davidB/rust-cargo-make@v1
+
+      - name: Install cargo stylus
+        env:
+          RUSTFLAGS: "-C link-args=-rdynamic"
+        run: cargo install --force cargo-stylus
+
+      - name: Checkout sources
+        uses: actions/checkout@v3
+
+      - name: Update submodules
+        run: git submodule update --init --recursive
+
+      - name: Compile contracts
+        run: cargo make optimize
+
+      - name: Format
+        run: cargo make fmt
+
+      - name: Clippy
+        run: cargo make clippy
+
+      - name: Test
+        run: cargo make test-contracts
+
+      - name: Audit dependencies
+        run: |
+          cargo install --locked cargo-audit
+          cargo make audit
