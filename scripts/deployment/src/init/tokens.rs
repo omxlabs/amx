@@ -6,6 +6,7 @@ use crate::constants::{
 use crate::contracts::distributor::{Distributor, DistributorInitArgs};
 use crate::contracts::weth::{Weth, WethInitArgs};
 use crate::contracts::yield_token::{YieldToken, YieldTokenInitArgs};
+use crate::contracts::Erc20AddressData;
 use crate::{
     contracts::{
         base_token::{BaseToken, BaseTokenInitArgs},
@@ -21,16 +22,22 @@ pub struct TokensContractsInitArgs {
     pub gov: Address,
 }
 
+#[derive(Clone, Debug)]
+pub struct Erc20TokenData {
+    pub name: String,
+    pub symbol: String,
+    pub decimals: u8,
+    pub is_shortable: bool,
+    pub is_stable: bool,
+    pub pyth_id: String,
+    pub contract: Erc20<LiveClient>,
+}
+
 /// All vault contracts
 #[derive(Clone, Debug)]
 pub struct TokensContracts {
     pub weth: Weth<LiveClient>,
-    pub btc: Erc20<LiveClient>,
-    pub atom: Erc20<LiveClient>,
-    pub osmo: Erc20<LiveClient>,
-    pub bnb: Erc20<LiveClient>,
-    pub usdt: Erc20<LiveClient>,
-    pub usdc: Erc20<LiveClient>,
+    pub erc20_tokens: Vec<Erc20TokenData>,
     pub usdo: YieldToken<LiveClient>,
     pub olp: BaseToken<LiveClient>,
     pub omx: BaseToken<LiveClient>,
@@ -52,28 +59,13 @@ impl TokensContracts {
         send(self.omx.mint(to, amount)).await.unwrap();
     }
 
-    pub async fn mint_btc(&self, to: Address, amount: U256) {
-        send(self.btc.mint(to, amount)).await.unwrap();
-    }
-
-    pub async fn mint_atom(&self, to: Address, amount: U256) {
-        send(self.atom.mint(to, amount)).await.unwrap();
-    }
-
-    pub async fn mint_osmo(&self, to: Address, amount: U256) {
-        send(self.osmo.mint(to, amount)).await.unwrap();
-    }
-
-    pub async fn mint_bnb(&self, to: Address, amount: U256) {
-        send(self.bnb.mint(to, amount)).await.unwrap();
-    }
-
-    pub async fn mint_usdt(&self, to: Address, amount: U256) {
-        send(self.usdt.mint(to, amount)).await.unwrap();
-    }
-
-    pub async fn mint_usdc(&self, to: Address, amount: U256) {
-        send(self.usdc.mint(to, amount)).await.unwrap();
+    pub async fn mint_erc20(&self, token: Address, to: Address, amount: U256) {
+        let token = self
+            .erc20_tokens
+            .iter()
+            .find(|t| t.contract.address() == token)
+            .unwrap();
+        send(token.contract.mint(to, amount)).await.unwrap();
     }
 }
 
@@ -142,59 +134,7 @@ impl TokensContractsInitArgs {
             .init(ctx, contracts.tokens.weth)
             .await,
 
-            bnb: Erc20InitArgs {
-                name: "Binance Coin".to_string(),
-                symbol: "BNB".to_string(),
-                decimals: BNB_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.bnb)
-            .await,
-
-            btc: Erc20InitArgs {
-                name: "Bitcoin".to_string(),
-                symbol: "BTC".to_string(),
-                decimals: BTC_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.btc)
-            .await,
-
-            atom: Erc20InitArgs {
-                name: "Cosmos".to_string(),
-                symbol: "ATOM".to_string(),
-                decimals: ATOM_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.atom)
-            .await,
-
-            osmo: Erc20InitArgs {
-                name: "Osmosis".to_string(),
-                symbol: "OSMO".to_string(),
-                decimals: OSMO_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.osmo)
-            .await,
-
-            usdt: Erc20InitArgs {
-                name: "Tether USD".to_string(),
-                symbol: "USDT".to_string(),
-                decimals: USDT_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.usdt)
-            .await,
-
-            usdc: Erc20InitArgs {
-                name: "USD Coin".to_string(),
-                symbol: "USDC".to_string(),
-                decimals: USDC_DECIMALS,
-                gov: self.gov,
-            }
-            .init(ctx, contracts.tokens.usdc)
-            .await,
+            erc20_tokens: init_erc20_tokens(ctx, &contracts.tokens.erc20_tokens, self.gov).await,
 
             usdo,
             omx,
@@ -213,4 +153,35 @@ impl TokensContractsInitArgs {
                 .await,
         }
     }
+}
+
+async fn init_erc20_tokens(
+    ctx: &DeployContext,
+    tokens: &Vec<Erc20AddressData>,
+    gov: Address,
+) -> Vec<Erc20TokenData> {
+    let mut result: Vec<Erc20TokenData> = Vec::with_capacity(tokens.len());
+
+    for token in tokens {
+        let contract = Erc20InitArgs {
+            gov,
+            decimals: token.decimals,
+            name: token.name.clone(),
+            symbol: token.symbol.clone(),
+        }
+        .init(ctx, token.address)
+        .await;
+
+        result.push(Erc20TokenData {
+            name: token.name.clone(),
+            symbol: token.symbol.clone(),
+            decimals: token.decimals,
+            is_shortable: token.is_shortable,
+            is_stable: token.is_stable,
+            pyth_id: token.pyth_id.clone(),
+            contract,
+        })
+    }
+
+    result
 }
