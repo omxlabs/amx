@@ -180,4 +180,8 @@ impl BonusDistributor {
 
         Ok(amount)
     }
+
+    pub fn reward_token(&self) -> Result<Address, Vec<u8>> {
+        Ok(self.reward_token.get())
+    }
 }

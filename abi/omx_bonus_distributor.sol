@@ -19,4 +19,6 @@ interface IBonusDistributor {
     function pendingRewards() external view returns (uint256);
 
     function distribute() external returns (uint256);
+
+    function rewardToken() external view returns (address);
 }
