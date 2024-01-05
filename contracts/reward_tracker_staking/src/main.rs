@@ -200,7 +200,7 @@ impl RewardTrackerStaking {
             return Ok(());
         }
 
-        if account.is_zero() {
+        if !account.is_zero() {
             let staked_amount = self.staked_amounts.get(account);
             let account_reward = safe_mul_ratio(
                 staked_amount,
