@@ -10,7 +10,7 @@ use omx_tests::{
     stylus_testing::provider::TestProvider,
     utils::{
         prices::expand_decimals,
-        test_helpers::{create_gov, create_user},
+        test_helpers::{create_gov, create_user, ConnectAcc},
     },
 };
 
@@ -21,7 +21,7 @@ async fn test_increase_order_two_traders() {
 
     gov.mint_eth(gov.address(), expand_decimals(1000, ETH_DECIMALS));
 
-    let orderbook_bin = fs::read("../../artifacts/omx_orderbook_increase.jos")
+    let orderbook_bin = fs::read("../../artifacts/omx_orderbook_increase.wasm")
         .expect("read increase_orderbook binaries");
     let orderbook = gov.deploy_contract(&orderbook_bin, ORDERBOOKINCREASE_ABI.clone(), "orderbook");
     let orderbook = OrderbookIncreaseInitArgs {
@@ -31,7 +31,7 @@ async fn test_increase_order_two_traders() {
     .init(gov.clone(), orderbook)
     .await;
 
-    let erc20_bin = fs::read("../../artifacts/omx_erc20.jos").expect("read erc20 binaries");
+    let erc20_bin = fs::read("../../artifacts/omx_erc20.wasm").expect("read erc20 binaries");
     let collateral_token = gov.deploy_contract(&erc20_bin, ERC20_ABI.clone(), "eth");
     let collateral_token = Erc20InitArgs {
         decimals: 18,
@@ -55,6 +55,7 @@ async fn test_increase_order_two_traders() {
             .unwrap();
 
         collateral_token
+            .connect_acc(user.clone())
             .approve(orderbook.address(), collateral_amount)
             .await
             .unwrap();
@@ -71,6 +72,7 @@ async fn test_increase_order_two_traders() {
 
     // User1 places an order
     orderbook
+        .connect_acc(user1.clone())
         .create_increase_order(
             collateral_amount,
             collateral_token.address(),
@@ -85,13 +87,28 @@ async fn test_increase_order_two_traders() {
         .await
         .unwrap();
 
-    let _order = orderbook
+    let order = orderbook
         .get_increase_order(user1.address(), U256::zero())
         .await
         .unwrap();
+    assert_eq!(
+        order,
+        (
+            user1.address(),
+            collateral_amount,
+            collateral_token.address(),
+            index_token,
+            size_delta_1,
+            is_long,
+            trigger_price,
+            trigger_above_threshold,
+            execution_fee,
+        )
+    );
 
     // User2 places a slightly different order
     orderbook
+        .connect_acc(user2.clone())
         .create_increase_order(
             collateral_amount,
             collateral_token.address(),
@@ -106,23 +123,23 @@ async fn test_increase_order_two_traders() {
         .await
         .unwrap();
 
-    let _order = orderbook
+    let order = orderbook
         .get_increase_order(user2.address(), U256::zero())
         .await
         .unwrap();
 
-    // assert_eq!(
-    //     order,
-    //     (
-    //         user1.address(),
-    //         collateral_amount,
-    //         collateral_token.address(),
-    //         index_token,
-    //         size_delta,
-    //         is_long,
-    //         trigger_price,
-    //         trigger_above_threshold,
-    //         execution_fee,
-    //     ),
-    // );
+    assert_eq!(
+        order,
+        (
+            user2.address(),
+            collateral_amount,
+            collateral_token.address(),
+            index_token,
+            size_delta_2,
+            is_long,
+            trigger_price,
+            trigger_above_threshold,
+            execution_fee,
+        ),
+    );
 }
