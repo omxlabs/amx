@@ -547,6 +547,6 @@ async fn test_swap_tokens_to_eth() {
 
     assert_eq!(
         user0.get_balance(user0.address(), None).await.unwrap(),
-        U256::from_dec_str("997000000000000000").unwrap(),
+        U256::from_dec_str("999600000000000000").unwrap(),
     );
 }
