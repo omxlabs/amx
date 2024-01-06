@@ -106,7 +106,7 @@ impl StakingContractsInitArgs {
         let (fee_omx_distributor, fee_omx_tracker, fee_omx_tracker_staking) = distributor!(
             fee_omx,
             Reward,
-            osmo,
+            weth,
             vec![contracts.staking.bonus_omx_tracker, contracts.tokens.bn_omx],
             "Staked + Bonus + Fee OMX",
             "sbfOMX"

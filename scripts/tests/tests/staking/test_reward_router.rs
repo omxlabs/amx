@@ -636,7 +636,7 @@ async fn test_stake_unstake_claim() {
             .claimable(user2.address())
             .await
             .unwrap(),
-        U256::from_dec_str("1488095237520000000000").unwrap()
+        U256::from_dec_str("595238095008000000000").unwrap()
     );
     assert_eq!(
         contracts
@@ -663,7 +663,7 @@ async fn test_stake_unstake_claim() {
             .claimable(user2.address())
             .await
             .unwrap(),
-        U256::from_dec_str("2739726027397260273").unwrap()
+        U256::from_dec_str("1369863013698630136").unwrap()
     );
     assert_eq!(
         contracts
@@ -681,7 +681,7 @@ async fn test_stake_unstake_claim() {
             .claimable(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("2380951872000000000").unwrap()
+        U256::from_dec_str("5952379680000000000").unwrap()
     );
     assert_eq!(
         contracts
@@ -690,7 +690,7 @@ async fn test_stake_unstake_claim() {
             .claimable(user2.address())
             .await
             .unwrap(),
-        U256::from_dec_str("1190476190476190476").unwrap()
+        U256::from_dec_str("1190475936000000000").unwrap()
     );
     assert_eq!(
         contracts
@@ -740,7 +740,7 @@ async fn test_stake_unstake_claim() {
             .balance_of(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("5952380952380952380").unwrap()
+        U256::from_dec_str("5952379680000000000").unwrap()
     );
     assert_eq!(
         contracts
@@ -765,7 +765,7 @@ async fn test_stake_unstake_claim() {
             .balance_of(user2.address())
             .await
             .unwrap(),
-        U256::from_dec_str("595238095238095238095").unwrap()
+        U256::from_dec_str("595238095008000000000").unwrap()
     );
     assert_eq!(
         contracts
@@ -790,7 +790,7 @@ async fn test_stake_unstake_claim() {
             .balance_of(user2.address())
             .await
             .unwrap(),
-        U256::from_dec_str("1190476190476190476").unwrap()
+        U256::from_dec_str("1190475936000000000").unwrap()
     );
     gov.advance_block_timestamp(24 * 60 * 60);
     gov.mine_block();
@@ -817,7 +817,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3642857142857142857140").unwrap()
+        U256::from_dec_str("3644332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -835,7 +835,7 @@ async fn test_stake_unstake_claim() {
             .deposit_balance(user1.address(), contracts.tokens.es_omx.address())
             .await
             .unwrap(),
-        U256::from_dec_str("2642857142857142857140").unwrap()
+        U256::from_dec_str("2644332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -844,7 +844,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3642857142857142857140").unwrap()
+        U256::from_dec_str("3644332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -853,7 +853,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3657142857142857142850").unwrap()
+        U256::from_dec_str("3658552550744247299279").unwrap()
     );
     assert_eq!(
         contracts
@@ -865,7 +865,7 @@ async fn test_stake_unstake_claim() {
             )
             .await
             .unwrap(),
-        U256::from_dec_str("3642857142857142857140").unwrap()
+        U256::from_dec_str("3644332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -874,7 +874,7 @@ async fn test_stake_unstake_claim() {
             .deposit_balance(user1.address(), contracts.tokens.bn_omx.address())
             .await
             .unwrap(),
-        U256::from_dec_str("14142857142857142857").unwrap()
+        U256::from_dec_str("14220482712372602737").unwrap()
     );
     assert_eq!(
         contracts
@@ -908,7 +908,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3342857142857142857140").unwrap()
+        U256::from_dec_str("3344332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -926,7 +926,7 @@ async fn test_stake_unstake_claim() {
             .deposit_balance(user1.address(), contracts.tokens.es_omx.address())
             .await
             .unwrap(),
-        U256::from_dec_str("2642857142857142857140").unwrap()
+        U256::from_dec_str("2644332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -935,7 +935,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3342857142857142857140").unwrap()
+        U256::from_dec_str("3344332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -944,7 +944,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("3357142857142857142850").unwrap()
+        U256::from_dec_str("3357381926132090120985").unwrap()
     );
     assert_eq!(
         contracts
@@ -956,7 +956,7 @@ async fn test_stake_unstake_claim() {
             )
             .await
             .unwrap(),
-        U256::from_dec_str("3342857142857142857140").unwrap()
+        U256::from_dec_str("3344332068031874696542").unwrap()
     );
     assert_eq!(
         contracts
@@ -965,7 +965,7 @@ async fn test_stake_unstake_claim() {
             .deposit_balance(user1.address(), contracts.tokens.bn_omx.address())
             .await
             .unwrap(),
-        U256::from_dec_str("13000000000000000000").unwrap()
+        U256::from_dec_str("13049858100215424443").unwrap()
     );
     let es_omx_balance_1 = contracts
         .tokens
@@ -1038,7 +1038,7 @@ async fn test_stake_unstake_claim() {
             .staked_amount(user1.address())
             .await
             .unwrap(),
-        U256::from_dec_str("7028571428571428571420").unwrap()
+        U256::from_dec_str("702731457428366749356").unwrap()
     );
     assert_eq!(
         contracts
@@ -1059,7 +1059,7 @@ async fn test_stake_unstake_claim() {
             .deposit_balance(user1.address(), contracts.tokens.bn_omx.address())
             .await
             .unwrap(),
-        U256::from_dec_str("2731428571428571428").unwrap()
+        U256::from_dec_str("2731457428366749356").unwrap()
     );
     contracts
         .staking
